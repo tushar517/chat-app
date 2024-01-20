@@ -7,13 +7,13 @@ spring:
           auto: none
         format_sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgres://tushar:WCBk4S974p3l96nQRgiF8HS5xA3D0B3V@dpg-cmlvi2v109ks7395ppvg-a.oregon-postgres.render.com/chat_4gqd
     username: tushar
-    password: tushar
+    password: WCBk4S974p3l96nQRgiF8HS5xA3D0B3V
+
   sql:
     init:
       mode: always
-      schema-locations: classpath:/data.sql
       continue-on-error: true
 
 server:
