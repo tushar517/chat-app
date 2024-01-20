@@ -1,4 +1,8 @@
 {
+  "name": "chat-app",
+  "scripts": {
+    "build": "com.chatters.Chat.App.ChatAppApplication"
+  },
   "engines": {
     "node": ">=18.18.0 <19.0.0"
   }
