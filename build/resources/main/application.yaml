@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: none
+        format_sql: true
+  datasource:
+    url: jdbc:postgres://tushar:WCBk4S974p3l96nQRgiF8HS5xA3D0B3V@dpg-cmlvi2v109ks7395ppvg-a/chat_4gqd
+    username: tushar
+    password: WCBk4S974p3l96nQRgiF8HS5xA3D0B3V
+
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
+
+server:
+  port: 8088
