@@ -6,16 +6,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "chat-message")
-public class ChatMessage {
+@Table(name = "chat-room")
+public class ChatRoom {
 
     @Id
     private String id;
@@ -25,8 +23,4 @@ public class ChatMessage {
     private String senderId;
     @Column
     private String recipientId;
-    @Column
-    private String content;
-    @Column
-    private Date timeStamp;
 }
