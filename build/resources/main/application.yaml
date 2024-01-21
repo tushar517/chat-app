@@ -8,7 +8,7 @@ spring:
         show_sql: true
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://dpg-cmlvi2v109ks7395ppvg-a/chat_4gqd
+    url: jdbc:postgresql://dpg-cmlvi2v109ks7395ppvg-a.oregon-postgres.render.com/chat_4gqd
     username: tushar
     password: WCBk4S974p3l96nQRgiF8HS5xA3D0B3V
     driver-class-name: org.postgresql.Driver
