@@ -1,6 +1,6 @@
 package com.chatters.ChatApp.service;
 
-import com.chatters.ChatApp.models.User;
+import com.chatters.ChatApp.models.Users;
 import com.chatters.ChatApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,13 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    public void saveUser(User user){
+    public void saveUser(Users user){
         user.setStatus(true);
         userRepository.save(user);
     }
 
-    public void disconnect(User user){
-        var storedUser = userRepository.findById(user.getNickName()).orElse(null);
+    public void disconnect(Users users){
+        var storedUser = userRepository.findById(users.getNickName()).orElse(null);
         if(storedUser !=null){
             storedUser.setStatus(false);
             userRepository.save(storedUser);
@@ -26,7 +26,7 @@ public class UserService {
 
     }
 
-    public List<User> findConnectedUser(){
+    public List<Users> findConnectedUser(){
         return userRepository.findAllByStatus(true);
     }
 }

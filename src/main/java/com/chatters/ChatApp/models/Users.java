@@ -10,9 +10,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-public class User {
+@Table
+public class Users {
     @Id
+    @Column
     private String nickName;
     @Column
     private String fullName;

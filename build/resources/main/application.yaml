@@ -3,18 +3,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        hbm2ddl:
-          auto: none
+        ddl-auto: drop
         format_sql: true
+        show_sql: true
+    generate-ddl: true
   datasource:
-    url: jdbc:postgres://tushar:WCBk4S974p3l96nQRgiF8HS5xA3D0B3V@dpg-cmlvi2v109ks7395ppvg-a/chat_4gqd
+    url: jdbc:postgresql://dpg-cmlvi2v109ks7395ppvg-a.oregon-postgres.render.com/chat_4gqd
     username: tushar
     password: WCBk4S974p3l96nQRgiF8HS5xA3D0B3V
-
-  sql:
-    init:
-      mode: always
-      continue-on-error: true
+    driver-class-name: org.postgresql.Driver
 
 server:
   port: 8088
