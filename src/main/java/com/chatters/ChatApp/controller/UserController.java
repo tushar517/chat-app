@@ -21,7 +21,7 @@ public class UserController {
     @MessageMapping("/user.addUser")
     @SendTo("/user/topic")
     public Users addUser(
-            Users users
+            @Payload Users users
     ){
         userService.saveUser(users);
         return users;

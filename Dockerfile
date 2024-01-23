@@ -3,9 +3,7 @@ WORKDIR /app
 COPY . /app/
 RUN ./gradlew clean build
 RUN ./gradlew bootJar --no-daemon
-
-# Package Stage
-FROM openjdk:17-alpine
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar /app/app.jar
 EXPOSE 8080
