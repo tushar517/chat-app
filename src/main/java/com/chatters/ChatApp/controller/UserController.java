@@ -3,7 +3,10 @@ package com.chatters.ChatApp.controller;
 import com.chatters.ChatApp.models.Users;
 import com.chatters.ChatApp.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.converter.MessageConversionException;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -18,8 +21,9 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @MessageMapping("/user.addUser")
-    @SendTo("/user/topic")
+    @MessageMapping("/user/addUser") //gifts
+    @SendTo("/user/topic") //topic/messages
+    @MessageExceptionHandler(MessageConversionException.class)
     public Users addUser(
             @Payload Users users
     ){
@@ -27,8 +31,9 @@ public class UserController {
         return users;
     }
 
-    @MessageMapping("/user.disconnectUser")
+    @MessageMapping("/user/disconnectUser")
     @SendTo("/user/topic")
+    @MessageExceptionHandler(MessageConversionException.class)
     public Users disconnect(
             @Payload Users users
     ){
@@ -37,6 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @MessageExceptionHandler(MessageConversionException.class)
     public ResponseEntity<List<Users>> findConnectedUsers(){
         List<Users> users = userService.findConnectedUser();
         if(users.isEmpty()){

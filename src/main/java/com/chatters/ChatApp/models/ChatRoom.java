@@ -1,10 +1,9 @@
 package com.chatters.ChatApp.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.id.factory.internal.AutoGenerationTypeStrategy;
+import org.springframework.context.annotation.Primary;
 
 @Getter
 @Setter
@@ -16,7 +15,10 @@ import lombok.*;
 public class ChatRoom {
 
     @Id
-    private String id;
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE
+    )
+    private Long id;
     @Column
     private String chatId;
     @Column
