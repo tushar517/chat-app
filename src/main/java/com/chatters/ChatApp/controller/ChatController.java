@@ -38,10 +38,11 @@ public class ChatController {
         message.setChatId(chatMessage.getChatId());
         message.setSenderId(chatMessage.getSenderId());
         message.setTimeStamp(date);
-        message.setSenderId(chatMessage.getSenderId());
-        ChatMessage savedMsg = chatMessageService.save(message);
-        chatMessage.setId(savedMsg.getId());
-        chatMessage.setTimeStamp(date);
+        message.setRecipientId(chatMessage.getRecipientId());
+        try{
+            ChatMessage savedMsg = chatMessageService.save(message);
+            chatMessage.setId(savedMsg.getId());
+            chatMessage.setTimeStamp(date);
 
             messagingTemplate.convertAndSendToUser(
                     chatMessage.getRecipientId(),
@@ -55,6 +56,10 @@ public class ChatController {
             );
 
         return chatMessage;
+        }catch (Exception exception){
+            System.out.println(exception.getMessage());
+            return chatMessage;
+        }
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
