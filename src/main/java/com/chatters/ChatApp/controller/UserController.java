@@ -38,6 +38,7 @@ public class UserController {
             @Payload Users users
     ){
         userService.disconnect(users);
+        users.setStatus(false);
         return users;
     }
 
