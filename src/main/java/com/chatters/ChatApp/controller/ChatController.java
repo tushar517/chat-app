@@ -43,6 +43,7 @@ public class ChatController {
             ChatMessage savedMsg = chatMessageService.save(message);
             chatMessage.setId(savedMsg.getId());
             chatMessage.setTimeStamp(date);
+            chatMessage.setChatId(savedMsg.getChatId());
 
             messagingTemplate.convertAndSendToUser(
                     chatMessage.getRecipientId(),
