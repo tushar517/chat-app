@@ -14,10 +14,11 @@ import lombok.Setter;
 public class Users {
     @Id
     @Column
-    private String nickName;
+    private String userName = "";
     @Column
     private String fullName;
     @Column
     private Boolean status;
-
+    @Column
+    private String password;
 }

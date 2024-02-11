@@ -3,15 +3,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        ddl-auto: drop
+        ddl-auto: update
         format_sql: true
         show_sql: true
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://dpg-cmlvi2v109ks7395ppvg-a.oregon-postgres.render.com/chat_4gqd
+    url: jdbc:postgresql://dpg-cn4cg2tjm4es73booutg-a.oregon-postgres.render.com/chat_app_ay1o
     username: tushar
-    password: WCBk4S974p3l96nQRgiF8HS5xA3D0B3V
+    password: fpDZZoDxgbgl9zENXsmwIjPw9bCUlPdY
     driver-class-name: org.postgresql.Driver
-
 server:
   port: 8088

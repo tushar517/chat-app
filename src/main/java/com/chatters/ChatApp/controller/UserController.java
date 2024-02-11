@@ -4,6 +4,7 @@ import com.chatters.ChatApp.models.Users;
 import com.chatters.ChatApp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -12,6 +13,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +27,19 @@ public class UserController {
     @MessageMapping("/user/addUser") //gifts
     @SendTo("/user/topic") //topic/messages
     @MessageExceptionHandler(MessageConversionException.class)
-    public Users addUser(
+    public Users connectUser(
             @Payload Users users
     ){
-        userService.saveUser(users);
+        userService.connectUser(users);
         return users;
+    }
+
+    @PostMapping("/user/createUser")
+    public ResponseEntity<Users> registerUser(
+        @RequestBody Users user
+    ){
+        userService.saveUser(user);
+        return ResponseEntity.ok(user);
     }
 
     @MessageMapping("/user/disconnectUser")
