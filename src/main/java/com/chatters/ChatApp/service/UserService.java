@@ -1,6 +1,9 @@
 package com.chatters.ChatApp.service;
 
+import com.chatters.ChatApp.Excpetion.InvalidPassword;
 import com.chatters.ChatApp.Excpetion.UserAlreadyExistException;
+import com.chatters.ChatApp.Excpetion.UserDoesNotExist;
+import com.chatters.ChatApp.models.SuccessResponse;
 import com.chatters.ChatApp.models.Users;
 import com.chatters.ChatApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +19,20 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public void saveUser(Users user) {
+    public SuccessResponse saveUser(Users user) {
         Optional<Users> storedUser = userRepository.findById(user.getUserName());
         if (storedUser.isPresent()) {
-            throw new UserAlreadyExistException("Username Already Exists");
+            return new SuccessResponse(
+                    false,
+                    "User already Exists"
+            );
+        }else {
+            userRepository.save(user);
+            return new SuccessResponse(
+                    true,
+                    "User created successfully"
+            );
         }
-        userRepository.save(user);
 
     }
 
@@ -43,5 +54,27 @@ public class UserService {
 
     public List<Users> findConnectedUser() {
         return userRepository.findAllByStatus(true);
+    }
+
+    public SuccessResponse loginUser(Users user) {
+        Optional<Users> storedUser = userRepository.findById(user.getUserName());
+        if (storedUser.isPresent()) {
+            if(storedUser.get().getPassword().equals(user.getPassword())) {
+                return new SuccessResponse(
+                        true,
+                        "Login Successful"
+                );
+            }else{
+                return new SuccessResponse(
+                        false,
+                        "Wrong Password"
+                );
+            }
+        }else{
+            return new SuccessResponse(
+                    false,
+                    "Invalid username"
+            );
+        }
     }
 }

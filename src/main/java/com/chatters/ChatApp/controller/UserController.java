@@ -1,5 +1,6 @@
 package com.chatters.ChatApp.controller;
 
+import com.chatters.ChatApp.models.SuccessResponse;
 import com.chatters.ChatApp.models.Users;
 import com.chatters.ChatApp.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,17 +30,25 @@ public class UserController {
     @MessageExceptionHandler(MessageConversionException.class)
     public Users connectUser(
             @Payload Users users
-    ){
+    ) {
         userService.connectUser(users);
         return users;
     }
 
+    @PostMapping("/user/loginUser")
+    public ResponseEntity<SuccessResponse> loginUser(
+            @RequestBody Users user
+    ) {
+        return ResponseEntity.ok(
+                userService.loginUser(user)
+        );
+    }
+
     @PostMapping("/user/createUser")
-    public ResponseEntity<Users> registerUser(
-        @RequestBody Users user
-    ){
-        userService.saveUser(user);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<SuccessResponse> registerUser(
+            @RequestBody Users user
+    ) {
+        return ResponseEntity.ok(userService.saveUser(user));
     }
 
     @MessageMapping("/user/disconnectUser")
@@ -47,7 +56,7 @@ public class UserController {
     @MessageExceptionHandler(MessageConversionException.class)
     public Users disconnect(
             @Payload Users users
-    ){
+    ) {
         userService.disconnect(users);
         users.setStatus(false);
         return users;
@@ -55,11 +64,11 @@ public class UserController {
 
     @GetMapping("/users")
     @MessageExceptionHandler(MessageConversionException.class)
-    public ResponseEntity<List<Users>> findConnectedUsers(){
+    public ResponseEntity<List<Users>> findConnectedUsers() {
         List<Users> users = userService.findConnectedUser();
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return ResponseEntity.ok(new ArrayList<>());
-        }else{
+        } else {
             return ResponseEntity.ok(users);
         }
 
