@@ -31,8 +31,7 @@ public class UserController {
     public Users connectUser(
             @Payload Users users
     ) {
-        userService.connectUser(users);
-        return users;
+        return userService.connectUser(users);
     }
 
     @PostMapping("/user/loginUser")

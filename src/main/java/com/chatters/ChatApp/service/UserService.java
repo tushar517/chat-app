@@ -44,12 +44,14 @@ public class UserService {
         }
     }
 
-    public void connectUser(Users user) {
+    public Users connectUser(Users user) {
         var storedUser = userRepository.findById(user.getUserName()).orElse(null);
         if (storedUser != null) {
             storedUser.setStatus(true);
             userRepository.save(storedUser);
+            return storedUser;
         }
+        return user;
     }
 
     public List<Users> findConnectedUser() {
