@@ -63,8 +63,8 @@ public class UserController {
 
     @GetMapping("/users")
     @MessageExceptionHandler(MessageConversionException.class)
-    public ResponseEntity<List<Users>> findConnectedUsers() {
-        List<Users> users = userService.findConnectedUser();
+    public ResponseEntity<List<Users>> findAllUsers() {
+        List<Users> users = userService.findAllUser();
         if (users.isEmpty()) {
             return ResponseEntity.ok(new ArrayList<>());
         } else {

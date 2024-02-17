@@ -21,4 +21,6 @@ public class Users {
     private Boolean status;
     @Column
     private String password;
+    @Column
+    private String gender;
 }
