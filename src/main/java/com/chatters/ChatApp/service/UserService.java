@@ -26,7 +26,7 @@ public class UserService {
             userRepository.save(user);
             return new SuccessResponse(
                     true,
-                    "User created successfully"
+                    "Signup successful"
             );
         }
 
