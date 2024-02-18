@@ -56,9 +56,7 @@ public class UserController {
     public Users disconnect(
             @Payload Users users
     ) {
-        userService.disconnect(users);
-        users.setStatus(false);
-        return users;
+        return userService.disconnect(users);
     }
 
     @GetMapping("/users")

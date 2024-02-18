@@ -32,12 +32,14 @@ public class UserService {
 
     }
 
-    public void disconnect(Users users) {
+    public Users disconnect(Users users) {
         var storedUser = userRepository.findById(users.getUserName()).orElse(null);
         if (storedUser != null) {
             storedUser.setStatus(false);
             userRepository.save(storedUser);
+            return storedUser;
         }
+        return users;
     }
 
     public Users connectUser(Users user) {
