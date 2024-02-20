@@ -32,8 +32,6 @@ public class UserController {
     public Users connectUser(
             @Payload Users users
     ) {
-        Date date = new Date();
-        users.setLastSeen(date);
         return userService.connectUser(users);
     }
 
@@ -50,8 +48,6 @@ public class UserController {
     public ResponseEntity<SuccessResponse> registerUser(
             @RequestBody Users user
     ) {
-        Date date = new Date();
-        user.setLastSeen(date);
         return ResponseEntity.ok(userService.saveUser(user));
     }
 
@@ -61,8 +57,6 @@ public class UserController {
     public Users disconnect(
             @Payload Users users
     ) {
-        Date date = new Date();
-        users.setLastSeen(date);
         return userService.disconnect(users);
     }
 
