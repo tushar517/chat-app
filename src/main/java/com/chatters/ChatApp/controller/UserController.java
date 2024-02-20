@@ -4,8 +4,6 @@ import com.chatters.ChatApp.models.SuccessResponse;
 import com.chatters.ChatApp.models.Users;
 import com.chatters.ChatApp.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -32,6 +30,8 @@ public class UserController {
     public Users connectUser(
             @Payload Users users
     ) {
+        Date date = new Date();
+        users.setLastSeen(date);
         return userService.connectUser(users);
     }
 
@@ -48,6 +48,8 @@ public class UserController {
     public ResponseEntity<SuccessResponse> registerUser(
             @RequestBody Users user
     ) {
+        Date date = new Date();
+        user.setLastSeen(date);
         return ResponseEntity.ok(userService.saveUser(user));
     }
 
@@ -57,6 +59,8 @@ public class UserController {
     public Users disconnect(
             @Payload Users users
     ) {
+        Date date = new Date();
+        users.setLastSeen(date);
         return userService.disconnect(users);
     }
 
