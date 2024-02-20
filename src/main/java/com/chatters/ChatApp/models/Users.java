@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @Entity
@@ -23,4 +25,6 @@ public class Users {
     private String password;
     @Column
     private String gender;
+    @Column
+    private Date lastSeen;
 }
