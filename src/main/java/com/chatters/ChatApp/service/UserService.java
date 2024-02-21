@@ -6,6 +6,7 @@ import com.chatters.ChatApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,7 @@ public class UserService {
         var storedUser = userRepository.findById(user.getUserName()).orElse(null);
         if (storedUser != null) {
             storedUser.setStatus(true);
+            storedUser.setLastSeen(new Date());
             userRepository.save(storedUser);
             return storedUser;
         }

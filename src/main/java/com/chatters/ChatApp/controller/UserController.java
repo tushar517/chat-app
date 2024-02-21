@@ -30,8 +30,6 @@ public class UserController {
     public Users connectUser(
             @Payload Users users
     ) {
-        Date date = new Date();
-        users.setLastSeen(date);
         return userService.connectUser(users);
     }
 
