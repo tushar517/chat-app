@@ -47,7 +47,6 @@ public class UserService {
         var storedUser = userRepository.findById(user.getUserName()).orElse(null);
         if (storedUser != null) {
             storedUser.setStatus(true);
-            storedUser.setLastSeen(new Date());
             userRepository.save(storedUser);
             return storedUser;
         }
