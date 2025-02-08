@@ -8,9 +8,9 @@ spring:
         show_sql: true
     generate-ddl: true
   datasource:
-    url: jdbc:postgresql://dpg-cn4cg2tjm4es73booutg-a.oregon-postgres.render.com/chat_app_ay1o
-    username: tushar
-    password: fpDZZoDxgbgl9zENXsmwIjPw9bCUlPdY
+    url: jdbc:postgresql://localhost:5431/ChatApp
+    username: Tushar
+    password: Tushar@123
     driver-class-name: org.postgresql.Driver
 server:
   port: 8088
