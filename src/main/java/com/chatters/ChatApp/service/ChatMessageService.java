@@ -2,6 +2,8 @@ package com.chatters.ChatApp.service;
 
 
 import com.chatters.ChatApp.models.ChatMessage;
+import com.chatters.ChatApp.models.SuccessResponse;
+import com.chatters.ChatApp.models.UserAllChats;
 import com.chatters.ChatApp.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +16,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatMessageService {
     private final ChatMessageRepository repository;
-    private final ChatRoomService chatRoomService;
 
     public ChatMessage save(ChatMessage chatMessage){
-        var chatId = chatRoomService.getChatRoomID(
-                chatMessage.getSenderId(),
-                chatMessage.getRecipientId(),
-                true
-        ).orElseThrow();
-        chatMessage.setChatId(chatId);
         return repository.save(chatMessage);
     }
 
-    public List<ChatMessage> findChatMessages(
-            String senderId, String recipientId
+    public SuccessResponse<UserAllChats> findChatMessages(
+            String chatRoomId
     ){
-        var chatID = chatRoomService.getChatRoomID(
-                senderId,
-                recipientId,
-                false
-        );
-        return chatID.map(repository::findByChatId).orElse(new ArrayList<>());
+        return SuccessResponse
+                .<UserAllChats>builder()
+                .response(new UserAllChats(repository.findByChatRoomId(chatRoomId)))
+                .status(true)
+                .description("Chats Fetched Successfully")
+                .build();
+
     }
 }

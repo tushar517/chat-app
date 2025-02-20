@@ -3,6 +3,8 @@ package com.chatters.ChatApp.controller;
 
 import com.chatters.ChatApp.models.ChatMessage;
 import com.chatters.ChatApp.models.ChatNotification;
+import com.chatters.ChatApp.models.SuccessResponse;
+import com.chatters.ChatApp.models.UserAllChats;
 import com.chatters.ChatApp.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,6 @@ import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,28 +27,17 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
 
-    @MessageMapping("/chat")
-    @SendTo("/user/messages")
+    @MessageMapping("/chat")//use in sendTo in client side
     @MessageExceptionHandler(MessageConversionException.class)
-    public ChatMessage processMessage(
+    public ChatMessage sendMessage(
             @Payload ChatMessage chatMessage
     ){
-        ChatMessage message = new ChatMessage();
         Date date = new Date();
-        message.setContent(chatMessage.getContent());
-        message.setChatId(chatMessage.getChatId());
-        message.setSenderId(chatMessage.getSenderId());
-        message.setTimeStamp(date);
-        message.setRecipientId(chatMessage.getRecipientId());
         try{
-            ChatMessage savedMsg = chatMessageService.save(message);
-            chatMessage.setId(savedMsg.getId());
             chatMessage.setTimeStamp(date);
-            chatMessage.setChatId(savedMsg.getChatId());
-
-            messagingTemplate.convertAndSendToUser(
-                    chatMessage.getRecipientId(),
-                    "/queue/messages",
+            ChatMessage savedMsg = chatMessageService.save(chatMessage);
+            messagingTemplate.convertAndSend(
+                    "/topic/messages/"+chatMessage.getChatRoomId(),
                     ChatNotification.builder()
                             .id(savedMsg.getId())
                             .senderId(savedMsg.getSenderId())
@@ -63,14 +53,13 @@ public class ChatController {
         }
     }
 
-    @GetMapping("/messages/{senderId}/{recipientId}")
+    @GetMapping("/messages/{chatRoomId}")
     @MessageExceptionHandler(MessageConversionException.class)
-    public ResponseEntity<List<ChatMessage>> findChatMessage(
-            @PathVariable("senderId") String senderId,
-            @PathVariable("recipientId") String recipientId
+    public ResponseEntity<SuccessResponse<UserAllChats>> findChatMessage(
+            @PathVariable("chatRoomId") String chatRoomId
     ){
         return ResponseEntity.ok(
-                chatMessageService.findChatMessages(senderId,recipientId)
+                chatMessageService.findChatMessages(chatRoomId)
         );
     }
 

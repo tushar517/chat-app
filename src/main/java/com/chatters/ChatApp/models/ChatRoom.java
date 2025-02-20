@@ -2,8 +2,6 @@ package com.chatters.ChatApp.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.id.factory.internal.AutoGenerationTypeStrategy;
-import org.springframework.context.annotation.Primary;
 
 @Getter
 @Setter
@@ -20,7 +18,7 @@ public class ChatRoom {
     )
     private Long id;
     @Column
-    private String chatId;
+    private String chatRoomId;
     @Column
     private String senderId;
     @Column

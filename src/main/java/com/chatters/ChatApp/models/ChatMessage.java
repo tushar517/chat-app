@@ -20,11 +20,13 @@ public class ChatMessage {
     )
     private Long id;
     @Column
-    private String chatId;
+    private String chatRoomId;
     @Column
     private String senderId;
     @Column
     private String recipientId;
+    @Column
+    private ContentType contentType;
     @Column
     private String content;
     @Column

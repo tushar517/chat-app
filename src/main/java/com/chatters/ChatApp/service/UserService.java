@@ -1,12 +1,14 @@
 package com.chatters.ChatApp.service;
 
-import com.chatters.ChatApp.models.SuccessResponse;
-import com.chatters.ChatApp.models.Users;
+import com.chatters.ChatApp.models.*;
 import com.chatters.ChatApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,26 +17,32 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final AuthenticationManager authManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public SuccessResponse saveUser(Users user) {
-        Optional<Users> storedUser = userRepository.findById(user.getUserName());
+    public SuccessResponse<AuthenticationResponse> saveUser(Users user) {
+        Optional<Users> storedUser = userRepository.findById(user.getUsername());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (storedUser.isPresent()) {
-            return new SuccessResponse(
-                    false,
-                    "User already Exists"
-            );
-        }else {
+            return SuccessResponse.<AuthenticationResponse>builder()
+                    .response(new AuthenticationResponse(""))
+                    .status(false)
+                    .description("User Already Exists")
+                    .build();
+        } else {
             userRepository.save(user);
-            return new SuccessResponse(
-                    true,
-                    "Signup successful"
-            );
+            var jwtToken = jwtService.generateToken(user);
+            return SuccessResponse.<AuthenticationResponse>builder()
+                    .response(new AuthenticationResponse(jwtToken))
+                    .status(true)
+                    .description("Signup successful")
+                    .build();
         }
-
     }
 
     public Users disconnect(Users users) {
-        var storedUser = userRepository.findById(users.getUserName()).orElse(null);
+        var storedUser = userRepository.findById(users.getUsername()).orElse(null);
         if (storedUser != null) {
             storedUser.setStatus(false);
             userRepository.save(storedUser);
@@ -43,39 +51,110 @@ public class UserService {
         return users;
     }
 
-    public Users connectUser(Users user) {
-        var storedUser = userRepository.findById(user.getUserName()).orElse(null);
-        if (storedUser != null) {
-            storedUser.setStatus(true);
-            userRepository.save(storedUser);
-            return storedUser;
-        }
-        return user;
-    }
-
-    public List<Users> findAllUser() {
-        return userRepository.findAll();
-    }
-
-    public SuccessResponse loginUser(Users user) {
-        Optional<Users> storedUser = userRepository.findById(user.getUserName());
-        if (storedUser.isPresent()) {
-            if(storedUser.get().getPassword().equals(user.getPassword())) {
-                return new SuccessResponse(
-                        true,
-                        "Login Successful"
-                );
-            }else{
-                return new SuccessResponse(
-                        false,
-                        "Wrong Password"
+    public UserResponse connectUser(UserResponse user) {
+        try {
+            var storedUser = userRepository.findById(user.getUserName().trim()).orElse(null);
+            if (storedUser != null) {
+                storedUser.setStatus(true);
+                userRepository.save(storedUser);
+                return new UserResponse(
+                        storedUser.getUsername(),
+                        storedUser.getFullName(),
+                        storedUser.getGender(),
+                        storedUser.getLastSeen(),
+                        storedUser.getProfileImg()
                 );
             }
-        }else{
-            return new SuccessResponse(
-                    false,
-                    "Invalid username"
-            );
+            return user;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return user;
+        }
+    }
+
+    public SuccessResponse<AllUserResponse> findAllUser() {
+        List<UserResponse> users = userRepository.findAllUsers();
+
+        if (users.isEmpty())
+            return SuccessResponse
+                    .<AllUserResponse>builder()
+                    .description("No user Found")
+                    .status(false)
+                    .response(new AllUserResponse(new ArrayList<>()))
+                    .build();
+        else
+            return SuccessResponse
+                    .<AllUserResponse>builder()
+                    .status(true)
+                    .description(users.size() + " users found")
+                    .response(new AllUserResponse(users))
+                    .build();
+    }
+
+    public SuccessResponse<AuthenticationResponse> loginUser(Users request) {
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+        var user = userRepository.findById(request.getUsername()).orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return SuccessResponse.<AuthenticationResponse>builder()
+                .response(new AuthenticationResponse(jwtToken))
+                .status(true)
+                .description("Login Successful")
+                .build();
+    }
+
+    public SuccessResponse<AuthenticationResponse> updatePassword(String userId, UpdatePasswordRequest request) {
+        Optional<Users> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            Users saveUser = user.get();
+            if (request.getCurrentPassword().equals(saveUser.getPassword())) {
+                saveUser.setPassword(request.getNewPassword());
+                userRepository.save(saveUser);
+                return SuccessResponse.<AuthenticationResponse>builder()
+                        .response(new AuthenticationResponse(""))
+                        .status(true)
+                        .description("Password Updated Successfully")
+                        .build();
+            } else {
+                return SuccessResponse.<AuthenticationResponse>builder()
+                        .response(new AuthenticationResponse(""))
+                        .status(false)
+                        .description("Current password is incorrect")
+                        .build();
+            }
+        } else {
+            return SuccessResponse.<AuthenticationResponse>builder()
+                    .response(new AuthenticationResponse(""))
+                    .status(false)
+                    .description("User Not Found")
+                    .build();
+        }
+    }
+
+    public SuccessResponse<AuthenticationResponse> updateUser(String userId, UpdateUserRequest request) {
+        Optional<Users> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            Users saveUser = user.get();
+            saveUser.setUsername(request.getUserName());
+            saveUser.setFullName(request.getFullName());
+            saveUser.setProfileImg(request.getProfileImg());
+            userRepository.save(saveUser);
+            return SuccessResponse.<AuthenticationResponse>builder()
+                    .response(new AuthenticationResponse(""))
+                    .status(true)
+                    .description("Details Updated Successfully")
+                    .build();
+
+        } else {
+            return SuccessResponse.<AuthenticationResponse>builder()
+                    .response(new AuthenticationResponse(""))
+                    .status(false)
+                    .description("User Not Found")
+                    .build();
         }
     }
 }

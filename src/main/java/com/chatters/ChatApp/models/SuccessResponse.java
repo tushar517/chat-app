@@ -1,17 +1,16 @@
 package com.chatters.ChatApp.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SuccessResponse {
+@Builder
+public class SuccessResponse<T> {
     Boolean status;
     String description;
+    T response;
 }
