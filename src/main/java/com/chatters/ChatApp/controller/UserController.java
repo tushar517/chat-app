@@ -1,5 +1,6 @@
 package com.chatters.ChatApp.controller;
 
+import com.chatters.ChatApp.enums.UserRole;
 import com.chatters.ChatApp.models.*;
 import com.chatters.ChatApp.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,23 @@ public class UserController {
 
     @PostMapping("/auth/user/createUser")
     public ResponseEntity<SuccessResponse<AuthenticationResponse>> registerUser(
-            @RequestBody Users user
+            @RequestBody UserRequest user
     ) {
+
         Date date = new Date();
-        user.setLastSeen(date);
-        return ResponseEntity.ok(userService.saveUser(user));
+        Users saveUser = Users
+                .builder()
+                .userRole(UserRole.User)
+                .status(false)
+                .fullName(user.getFullName())
+                .gender(user.getGender())
+                .username(user.getUserName())
+                .lastSeen(date)
+                .password(user.getPassword())
+                .profileImg(user.getProfileImg())
+                .build();
+
+        return ResponseEntity.ok(userService.saveUser(saveUser));
     }
 
     @MessageMapping("/disconnectUser")
