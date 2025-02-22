@@ -8,9 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (storedUser.isPresent()) {
             return SuccessResponse.<AuthenticationResponse>builder()
-                    .response(new AuthenticationResponse(""))
+                    .response(new AuthenticationResponse(
+                            "",
+                            UserResponse
+                                    .builder()
+                                    .userName(user.getUsername())
+                                    .profileImg(user.getProfileImg())
+                                    .fullName(user.getFullName())
+                                    .gender(user.getGender())
+                                    .lastSeen(new Date())
+                                    .build()))
                     .status(false)
                     .description("User Already Exists")
                     .build();
@@ -34,7 +41,14 @@ public class UserService {
             userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
             return SuccessResponse.<AuthenticationResponse>builder()
-                    .response(new AuthenticationResponse(jwtToken))
+                    .response(new AuthenticationResponse(jwtToken,UserResponse
+                            .builder()
+                            .userName(user.getUsername())
+                            .profileImg(user.getProfileImg())
+                            .fullName(user.getFullName())
+                            .gender(user.getGender())
+                            .lastSeen(new Date())
+                            .build()))
                     .status(true)
                     .description("Signup successful")
                     .build();
@@ -101,7 +115,14 @@ public class UserService {
         var user = userRepository.findById(request.getUsername()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return SuccessResponse.<AuthenticationResponse>builder()
-                .response(new AuthenticationResponse(jwtToken))
+                .response(new AuthenticationResponse(jwtToken,UserResponse
+                        .builder()
+                        .userName(user.getUsername())
+                        .profileImg(user.getProfileImg())
+                        .fullName(user.getFullName())
+                        .gender(user.getGender())
+                        .lastSeen(new Date())
+                        .build()))
                 .status(true)
                 .description("Login Successful")
                 .build();
@@ -115,20 +136,20 @@ public class UserService {
                 saveUser.setPassword(request.getNewPassword());
                 userRepository.save(saveUser);
                 return SuccessResponse.<AuthenticationResponse>builder()
-                        .response(new AuthenticationResponse(""))
+                        .response(new AuthenticationResponse("",new UserResponse()))
                         .status(true)
                         .description("Password Updated Successfully")
                         .build();
             } else {
                 return SuccessResponse.<AuthenticationResponse>builder()
-                        .response(new AuthenticationResponse(""))
+                        .response(new AuthenticationResponse("",new UserResponse()))
                         .status(false)
                         .description("Current password is incorrect")
                         .build();
             }
         } else {
             return SuccessResponse.<AuthenticationResponse>builder()
-                    .response(new AuthenticationResponse(""))
+                    .response(new AuthenticationResponse("",new UserResponse()))
                     .status(false)
                     .description("User Not Found")
                     .build();
@@ -144,14 +165,21 @@ public class UserService {
             saveUser.setProfileImg(request.getProfileImg());
             userRepository.save(saveUser);
             return SuccessResponse.<AuthenticationResponse>builder()
-                    .response(new AuthenticationResponse(""))
+                    .response(new AuthenticationResponse("",UserResponse
+                            .builder()
+                            .userName(saveUser.getUsername())
+                            .profileImg(saveUser.getProfileImg())
+                            .fullName(saveUser.getFullName())
+                            .gender(saveUser.getGender())
+                            .lastSeen(new Date())
+                            .build()))
                     .status(true)
                     .description("Details Updated Successfully")
                     .build();
 
         } else {
             return SuccessResponse.<AuthenticationResponse>builder()
-                    .response(new AuthenticationResponse(""))
+                    .response(new AuthenticationResponse("",new UserResponse()))
                     .status(false)
                     .description("User Not Found")
                     .build();

@@ -9,6 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class UserResponse {
     String userName;
     String fullName;
