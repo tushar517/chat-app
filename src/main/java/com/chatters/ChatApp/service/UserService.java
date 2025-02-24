@@ -40,15 +40,16 @@ public class UserService {
         } else {
             userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
+            UserResponse userResponse = UserResponse
+                    .builder()
+                    .userName(user.getUsername())
+                    .profileImg(user.getProfileImg())
+                    .fullName(user.getFullName())
+                    .gender(user.getGender())
+                    .lastSeen(new Date())
+                    .build();
             return SuccessResponse.<AuthenticationResponse>builder()
-                    .response(new AuthenticationResponse(jwtToken,UserResponse
-                            .builder()
-                            .userName(user.getUsername())
-                            .profileImg(user.getProfileImg())
-                            .fullName(user.getFullName())
-                            .gender(user.getGender())
-                            .lastSeen(new Date())
-                            .build()))
+                    .response(new AuthenticationResponse(jwtToken,userResponse))
                     .status(true)
                     .description("Signup successful")
                     .build();

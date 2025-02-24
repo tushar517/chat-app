@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/addUser") //use in sendTo in client side
     @SendTo("/topic/connectedUser") //use in subscribing
@@ -35,8 +37,14 @@ public class UserController {
     public ResponseEntity<SuccessResponse<AuthenticationResponse>> loginUser(
             @RequestBody Users user
     ) {
+        SuccessResponse<AuthenticationResponse> response = userService.loginUser(user);
+        UserResponse userResponse = response.getResponse().getUserDetail();
+        messagingTemplate.convertAndSend(
+                "/topic/connectedUser",
+                userResponse
+        );
         return ResponseEntity.ok(
-                userService.loginUser(user)
+                response
         );
     }
 
@@ -57,8 +65,12 @@ public class UserController {
                 .password(user.getPassword())
                 .profileImg(user.getProfileImg())
                 .build();
-
-        return ResponseEntity.ok(userService.saveUser(saveUser));
+        SuccessResponse<AuthenticationResponse> response = userService.saveUser(saveUser);
+        messagingTemplate.convertAndSend(
+                "/topic/connectedUser",
+                response.getResponse().getUserDetail()
+        );
+        return ResponseEntity.ok(response);
     }
 
     @MessageMapping("/disconnectUser")
