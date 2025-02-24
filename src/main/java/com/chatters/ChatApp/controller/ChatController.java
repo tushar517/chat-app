@@ -1,10 +1,7 @@
 package com.chatters.ChatApp.controller;
 
 
-import com.chatters.ChatApp.models.ChatMessage;
-import com.chatters.ChatApp.models.ChatNotification;
-import com.chatters.ChatApp.models.SuccessResponse;
-import com.chatters.ChatApp.models.UserAllChats;
+import com.chatters.ChatApp.models.*;
 import com.chatters.ChatApp.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,26 +27,29 @@ public class ChatController {
     @MessageMapping("/chat")//use in sendTo in client side
     @MessageExceptionHandler(MessageConversionException.class)
     public ChatMessage sendMessage(
-            @Payload ChatMessage chatMessage
+            @Payload SendChatRequest request
     ){
         Date date = new Date();
         try{
-            chatMessage.setTimeStamp(date);
-            ChatMessage savedMsg = chatMessageService.save(chatMessage);
+            ChatMessage chatMessage = ChatMessage
+                    .builder()
+                    .timeStamp(date)
+                    .contentType(ContentType.Text)
+                    .chatRoomId(request.getChatRoomId())
+                    .content(request.getContent())
+                    .senderId(request.getSenderId())
+                    .recipientId(request.getRecipientId())
+                    .build();
+            chatMessageService.save(chatMessage);
             messagingTemplate.convertAndSend(
                     "/topic/messages/"+chatMessage.getChatRoomId(),
-                    ChatNotification.builder()
-                            .id(savedMsg.getId())
-                            .senderId(savedMsg.getSenderId())
-                            .recipientId(savedMsg.getRecipientId())
-                            .content(savedMsg.getContent())
-                            .build()
+                    chatMessage
             );
 
         return chatMessage;
         }catch (Exception exception){
             System.out.println(exception.getMessage());
-            return chatMessage;
+            return null;
         }
     }
 
