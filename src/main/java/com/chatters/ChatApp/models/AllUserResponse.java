@@ -13,4 +13,5 @@ import java.util.List;
 @Setter
 public class AllUserResponse {
     List<UserResponse> allUsers;
+    int totalPages;
 }

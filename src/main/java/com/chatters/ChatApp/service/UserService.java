@@ -3,6 +3,9 @@ package com.chatters.ChatApp.service;
 import com.chatters.ChatApp.models.*;
 import com.chatters.ChatApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -95,14 +98,14 @@ public class UserService {
                     .<AllUserResponse>builder()
                     .description("No user Found")
                     .status(false)
-                    .response(new AllUserResponse(new ArrayList<>()))
+                    .response(new AllUserResponse(new ArrayList<>(),0))
                     .build();
         else
             return SuccessResponse
                     .<AllUserResponse>builder()
                     .status(true)
                     .description(users.size() + " users found")
-                    .response(new AllUserResponse(users))
+                    .response(new AllUserResponse(users,1))
                     .build();
     }
 
@@ -185,5 +188,25 @@ public class UserService {
                     .description("User Not Found")
                     .build();
         }
+    }
+
+    public SuccessResponse<AllUserResponse> findPaginatedUser(int pageSize,int pageNumber) {
+
+        Pageable pageable = PageRequest.of(pageNumber,pageSize);
+        Page<UserResponse> users = userRepository.findPaginatedUsers(pageable);
+        if (users.isEmpty())
+            return SuccessResponse
+                    .<AllUserResponse>builder()
+                    .description("No user Found")
+                    .status(false)
+                    .response(new AllUserResponse(new ArrayList<>(),0))
+                    .build();
+        else
+            return SuccessResponse
+                    .<AllUserResponse>builder()
+                    .status(true)
+                    .description(users.getContent().size() + " users found")
+                    .response(new AllUserResponse(users.getContent(),users.getTotalPages()))
+                    .build();
     }
 }

@@ -3,6 +3,8 @@ package com.chatters.ChatApp.repository;
 
 import com.chatters.ChatApp.models.UserResponse;
 import com.chatters.ChatApp.models.Users;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,4 +16,7 @@ public interface UserRepository extends JpaRepository<Users,String> {
 
     @Query("SELECT new com.chatters.ChatApp.models.UserResponse(user.username,user.fullName,user.gender,user.lastSeen,user.profileImg) from Users user")
     List<UserResponse> findAllUsers();
+
+    @Query("SELECT new com.chatters.ChatApp.models.UserResponse(user.username,user.fullName,user.gender,user.lastSeen,user.profileImg) from Users user")
+    Page<UserResponse> findPaginatedUsers(Pageable pageable);
 }
