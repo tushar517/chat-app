@@ -105,4 +105,14 @@ public class UserController {
     ){
         return ResponseEntity.ok(userService.updateUser(userId,request));
     }
+
+    @GetMapping("/usersPaginated")
+    @MessageExceptionHandler(MessageConversionException.class)
+    public ResponseEntity<SuccessResponse<AllUserResponse>> findPaginatedUsers(
+            @RequestParam(value = "page_size",defaultValue = "1",required = false) int pageSize,
+            @RequestParam(value = "page_number",defaultValue = "2",required = false) int pageNumber
+    ) {
+        return ResponseEntity.ok(userService.findPaginatedUser(pageSize,pageNumber));
+
+    }
 }
