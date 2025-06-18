@@ -1,7 +1,7 @@
 # ---------- Stage 1: Build the application ----------
 FROM gradle:8.2.1-jdk17 AS builder
 
-WORKDIR /home/app
+WORKDIR /app
 
 COPY . /app/
 
