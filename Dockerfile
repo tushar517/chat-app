@@ -3,16 +3,17 @@ FROM gradle:8.2.1-jdk17 AS builder
 
 WORKDIR /home/app
 
-COPY --chown=gradle:gradle . .
+COPY . /app/
 
-RUN gradle clean build --no-daemon
+RUN ./gradlew clean build
+RUN ./gradlew bootJar --no-daemon
 
 # ---------- Stage 2: Run the application ----------
 FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-COPY --from=builder /home/app/build/libs/*.jar app.jar
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
 EXPOSE 8080
 
